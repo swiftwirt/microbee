@@ -47,16 +47,11 @@ A Bluetooth-controlled robot built for the micro:bit platform with obstacle avoi
 
 1. **Open MakeCode**
    - Go to [makecode.microbit.org](https://makecode.microbit.org/)
-   - Click **New Project**
 
-2. **Add Extension**
-   - Click **Extensions** in the gearwheel menu
-   - Search for: `https://github.com/swiftwirt/microbee`
-   - Import the extension
-
-3. **Flash to micro:bit**
-   - Connect your micro:bit via USB
-   - Click **Download** to flash the code
+2. **Import Project**
+   - Click **Import** then click **Import URL**
+   - Paste: `https://github.com/swiftwirt/microbee`
+   - Click **Go** to import the project
 
 ### Basic Usage
 
