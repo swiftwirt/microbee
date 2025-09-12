@@ -28,10 +28,10 @@ A Bluetooth-controlled robot built for the micro:bit platform with obstacle avoi
 | Right Motor Forward | P14 | PWM Output |
 | Right Motor Backward | P15 | PWM Output |
 | **Sonar Sensors** | | |
-| Front Sonar Trigger | P6 | Digital Output |
-| Front Sonar Echo | P2 | Digital Input |
-| Back Sonar Trigger | P9 | Digital Output |
-| Back Sonar Echo | P3 | Digital Input |
+| Front Sonar Trigger | P16 | Digital Output |
+| Front Sonar Echo | P8 | Digital Input |
+| Back Sonar Trigger | P2 | Digital Output |
+| Back Sonar Echo | P1 | Digital Input |
 
 ### Required Components
 

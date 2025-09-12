@@ -6,10 +6,10 @@
 //   P15: Right motor backward
 //
 // Sonar Sensors (Digital I/O):
-//   P6:  Front sonar trigger
-//   P2:  Front sonar echo
-//   P9:  Back sonar trigger
-//   P3:  Back sonar echo
+//   P16:  Front sonar trigger
+//   P8:  Front sonar echo
+//   P2:  Back sonar trigger
+//   P1:  Back sonar echo
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let connected = false;
