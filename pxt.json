@@ -34,7 +34,8 @@
                 "bluetooth": {
                     "open": 1,
                     "whitelist": 0,
-                    "security_level": null
+                    "security_level": null,
+                    "event_service": 0
                 }
             }
         }
