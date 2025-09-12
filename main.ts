@@ -7,17 +7,9 @@
 //
 // Sonar Sensors (Digital I/O):
 //   P6:  Front sonar trigger
-//   P7:  Front sonar echo
+//   P2:  Front sonar echo
 //   P9:  Back sonar trigger
-//   P10: Back sonar echo
-//
-// Environmental Sensor (Digital I/O):
-//   P3:  DHT11 temperature/humidity sensor
-//
-// Built-in Features:
-//   Buttons A, B, AB (built-in)
-//   LED matrix (built-in)
-//   Bluetooth (built-in)
+//   P3:  Back sonar echo
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let connected = false;

@@ -17,8 +17,8 @@ namespace Robot.Sonar {
     }
 
     basic.forever(function () {
-        frontDistance = retryPing(DigitalPin.P1, DigitalPin.P2);
-        backDistance = retryPing(DigitalPin.P1, DigitalPin.P3);
+        frontDistance = retryPing(DigitalPin.P6, DigitalPin.P2);
+        backDistance = retryPing(DigitalPin.P9, DigitalPin.P3);
         if (!connected && !isReturning) {
             // reverseCommands();
         } else if (

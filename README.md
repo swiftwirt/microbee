@@ -29,11 +29,9 @@ A Bluetooth-controlled robot built for the micro:bit platform with obstacle avoi
 | Right Motor Backward | P15 | PWM Output |
 | **Sonar Sensors** | | |
 | Front Sonar Trigger | P6 | Digital Output |
-| Front Sonar Echo | P7 | Digital Input |
+| Front Sonar Echo | P2 | Digital Input |
 | Back Sonar Trigger | P9 | Digital Output |
-| Back Sonar Echo | P10 | Digital Input |
-| **Environmental** | | |
-| DHT11 Sensor | P3 | Digital I/O |
+| Back Sonar Echo | P3 | Digital Input |
 
 ### Required Components
 
@@ -41,7 +39,6 @@ A Bluetooth-controlled robot built for the micro:bit platform with obstacle avoi
 - 2x DC Motors with wheels
 - 2x Motor driver modules (L298N or similar)
 - 2x HC-SR04 Ultrasonic sensors
-- DHT11 Temperature/Humidity sensor (optional)
 - Robot chassis and battery pack
 
 ## 🚀 Quick Start
