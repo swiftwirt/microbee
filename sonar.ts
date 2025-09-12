@@ -19,9 +19,7 @@ namespace Robot.Sonar {
     basic.forever(function () {
         frontDistance = retryPing(DigitalPin.P16, DigitalPin.P8);
         backDistance = retryPing(DigitalPin.P2, DigitalPin.P1);
-        if (!connected && !isReturning) {
-            // reverseCommands();
-        } else if (
+        if (
             (Robot.Motion.currentDir > 0 && frontDistance < Robot.Motion.SAFE_DISTANCE) ||
             (Robot.Motion.currentDir < 0 && backDistance < Robot.Motion.SAFE_DISTANCE)
         ) {
