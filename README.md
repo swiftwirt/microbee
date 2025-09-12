@@ -124,21 +124,6 @@ microbee/
 └── test.ts          # Test functions
 ```
 
-### Building from Source
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/swiftwirt/microbee.git
-   cd microbee
-   ```
-
-2. Open in MakeCode:
-   - Go to [makecode.microbit.org](https://makecode.microbit.org/)
-   - Click **Import** → **Import URL**
-   - Paste: `https://github.com/swiftwirt/microbee`
-
-3. Modify and flash to your micro:bit
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
