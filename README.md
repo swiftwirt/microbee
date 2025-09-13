@@ -35,7 +35,7 @@ A Bluetooth-controlled robot built for the micro:bit platform with obstacle avoi
 
 ### Required Components
 
-- micro:bit v2 (recommended) or v1.5
+- micro:bit v2 
 - 2x DC Motors with wheels
 - Motor driver module (L298N or similar)
 - 2x HC-SR04 Ultrasonic sensors
