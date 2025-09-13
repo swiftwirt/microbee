@@ -1,3 +1,10 @@
+// ─── PIN ASSIGNMENTS ─────────────────────────────────────────────────────────
+// Motor Control (Analog PWM):
+//   P12: Left motor forward
+//   P13: Left motor backward  
+//   P14: Right motor forward
+//   P15: Right motor backward
+
 namespace Robot.Motion {
     const ARROW_FWD = ArrowNames.South;
     const ARROW_REV = ArrowNames.North;
@@ -26,6 +33,7 @@ namespace Robot.Motion {
 
         // Validate input parameters
         if (typeof leftSpeed !== "number" || typeof rightSpeed !== "number") {
+            basic.showString("TYPE", 200);
             leftSpeed = 0;
             rightSpeed = 0;
         }

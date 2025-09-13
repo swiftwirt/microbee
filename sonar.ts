@@ -1,3 +1,9 @@
+// Sonar Sensors (Digital I/O):
+//   P16:  Front sonar trigger
+//   P8:  Front sonar echo
+//   P1:  Back sonar trigger
+//   P2:  Back sonar echo
+
 namespace Robot.Sonar {
     // ─── SONAR PING WITH RETRY ───────────────────────────────────────────────────
     const SONAR_RETRY = 2;
@@ -18,7 +24,7 @@ namespace Robot.Sonar {
 
     basic.forever(function () {
         frontDistance = retryPing(DigitalPin.P16, DigitalPin.P8);
-        backDistance = retryPing(DigitalPin.P2, DigitalPin.P1);
+        backDistance = retryPing(DigitalPin.P1, DigitalPin.P2);
         if (
             (Robot.Motion.currentDir > 0 && frontDistance < Robot.Motion.SAFE_DISTANCE) ||
             (Robot.Motion.currentDir < 0 && backDistance < Robot.Motion.SAFE_DISTANCE)
