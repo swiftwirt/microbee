@@ -26,8 +26,8 @@ namespace Robot.Sonar {
         frontDistance = retryPing(DigitalPin.P16, DigitalPin.P8);
         backDistance = retryPing(DigitalPin.P1, DigitalPin.P2);
         if (
-            (Robot.Motion.currentDir > 0 && frontDistance < Robot.Motion.SAFE_DISTANCE) ||
-            (Robot.Motion.currentDir < 0 && backDistance < Robot.Motion.SAFE_DISTANCE)
+            (Robot.Motion.currentDir > 0 && frontDistance < Robot.Motion.getCurrentFrontSafeDistance()) ||
+            (Robot.Motion.currentDir < 0 && backDistance < Robot.Motion.getCurrentBackSafeDistance())
         ) {
             Robot.Motion.stop();
         }

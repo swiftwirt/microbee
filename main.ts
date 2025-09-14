@@ -1,6 +1,7 @@
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let connected = false;
-let isReturning = false;
+
+Robot.Display.showIconIfChanged(IconNames.Happy);
 
 basic.forever(function () {
     if (connected) Robot.Observer.sendTelemetry();

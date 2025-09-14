@@ -8,13 +8,12 @@ namespace Robot.Bluetooth {
 
     bluetooth.onBluetoothConnected(() => {
         connected = true;
-        isReturning = false;
         Robot.Display.showIconIfChanged(IconNames.Heart);
     });
 
     bluetooth.onBluetoothDisconnected(() => {
         connected = false;
-        Robot.Display.showIconIfChanged(IconNames.Skull);
+        Robot.Display.showIconIfChanged(IconNames.Sad);
     });
 
     bluetooth.onUartDataReceived(NEWLINE, () => {

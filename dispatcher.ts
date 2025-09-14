@@ -1,47 +1,52 @@
 namespace Robot.Dispatcher {
     export function dispatch(cmd: string) {
-        if (!isReturning) {
-            // Try to parse as JSON settings message first
-            if (!tryParseSettingsMessage(cmd)) {
-                // Handle existing numeric commands
-                executeCmd(cmd)
-            }
+        // Try to parse as JSON settings message first
+        if (!tryParseSettingsMessage(cmd)) {
+            // Handle existing numeric commands
+            executeCmd(cmd)
         }
     }
 
     // ─── SETTINGS MESSAGE HANDLING ──────────────────────────────────────────────
     function tryParseSettingsMessage(cmd: string): boolean {
         try {
-
             // Try to parse as JSON
             const parsed = JSON.parse(cmd);
 
-            // format: {"l":X,"r":Y}
+            // format: {"l":X,"r":Y,"f":Z,"b":W}
             if (parsed && typeof parsed === "object") {
-                let leftSpeed: number | undefined;
-                let rightSpeed: number | undefined;
+                let processed = false;
 
-                // Check new format first: {"l":X,"r":Y}
+                // Process motor speeds if both are provided
                 if (typeof parsed.l === "number" && typeof parsed.r === "number") {
-                    leftSpeed = parsed.l;
-                    rightSpeed = parsed.r;
-                }
+                    const leftSpeed = parsed.l;
+                    const rightSpeed = parsed.r;
 
-                // If we have valid speeds, apply them
-                if (leftSpeed !== undefined && rightSpeed !== undefined) {
-                    // Validate speed ranges before applying
-                    if (leftSpeed < 0 || leftSpeed > 1023 ||
-                        rightSpeed < 0 || rightSpeed > 1023) {
+                    // Validate and apply motor speeds
+                    if (leftSpeed >= 0 && leftSpeed <= 1023 && rightSpeed >= 0 && rightSpeed <= 1023) {
+                        Robot.Motion.setMotorSpeeds(leftSpeed, rightSpeed);
+                        processed = true;
                     }
-
-                    // Apply motor speeds using motion control
-                    Robot.Motion.setMotorSpeeds(leftSpeed, rightSpeed);
-                    // basic.showIcon(IconNames.Yes);
-                    return true; // Successfully handled
                 }
+
+                // Process safe distances if both are provided
+                if (typeof parsed.f === "number" && typeof parsed.b === "number") {
+                    const frontDistance = parsed.f;
+                    const backDistance = parsed.b;
+
+                    basic.showString(frontDistance, 100);
+                    basic.showString(backDistance, 100);
+
+                    // Validate and apply safe distances (20-100cm range)
+                    if (frontDistance >= 20 && frontDistance <= 100 && backDistance >= 5 && backDistance <= 200) {
+                        Robot.Motion.setSafeDistances(frontDistance, backDistance);
+                        processed = true;
+                    }
+                }
+
+                return processed;
             }
             return false;
-
         } catch (error) {
             return false;
         }

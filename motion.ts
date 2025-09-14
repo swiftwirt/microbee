@@ -18,7 +18,7 @@ namespace Robot.Motion {
     const MAX_SPEED = 1023;
     const TURN_SCALE_NUM = 4;
     const TURN_SCALE_DEN = 10;
-    export const SAFE_DISTANCE = 40;
+    export const DEFAULT_SAFE_DISTANCE = 40;
     export const ACTIVE_BRAKE_MS = 100;
 
     export let motorsRunning = false;
@@ -28,14 +28,20 @@ namespace Robot.Motion {
     let currentLeftSpeed = 0;
     let currentRightSpeed = 0;
 
+    // ─── SAFE DISTANCE STATE ───────────────────────────────────────────────────
+    let currentFrontSafeDistance = DEFAULT_SAFE_DISTANCE;
+    let currentBackSafeDistance = DEFAULT_SAFE_DISTANCE;
+
     // ─── INDIVIDUAL MOTOR CONTROL ─────────────────────────────────────────────
     export function setMotorSpeeds(leftSpeed: number, rightSpeed: number) {
 
         // Validate input parameters
-        if (typeof leftSpeed !== "number" || typeof rightSpeed !== "number") {
-            basic.showString("TYPE", 200);
-            leftSpeed = 0;
-            rightSpeed = 0;
+        if (typeof leftSpeed !== "number") {
+            leftSpeed = MAX_SPEED;
+        } 
+        
+        if (typeof rightSpeed !== "number") {
+            rightSpeed = MAX_SPEED;
         }
 
         // Clamp speeds to valid range 0-1023
@@ -60,19 +66,48 @@ namespace Robot.Motion {
     export function resetToDefaultSpeeds() {
         currentLeftSpeed = 0;  // 0 means use MAX_SPEED
         currentRightSpeed = 0; // 0 means use MAX_SPEED
-        console.log("Reset to default speeds");
     }
 
     // ─── CLEAR CUSTOM SPEEDS ─────────────────────────────────────────────────
     export function clearCustomSpeeds() {
         currentLeftSpeed = 0;
         currentRightSpeed = 0;
-        console.log("Custom speeds cleared");
+    }
+
+    // ─── SAFE DISTANCE CONTROL ───────────────────────────────────────────────
+    export function setSafeDistances(frontDistance: number, backDistance: number) {
+        // Validate input parameters
+        if (typeof frontDistance !== "number") {
+            frontDistance = DEFAULT_SAFE_DISTANCE;
+        }
+
+        if (typeof frontDistance !== "number") {
+            backDistance = DEFAULT_SAFE_DISTANCE;
+        }
+
+        // Clamp distances to reasonable range 20-100cm
+        currentFrontSafeDistance = Math.max(20, Math.min(100, frontDistance));
+        currentBackSafeDistance = Math.max(20, Math.min(100, backDistance));
+    }
+
+    // ─── GET CURRENT SAFE DISTANCES ──────────────────────────────────────────
+    export function getCurrentFrontSafeDistance(): number {
+        return currentFrontSafeDistance;
+    }
+
+    export function getCurrentBackSafeDistance(): number {
+        return currentBackSafeDistance;
+    }
+
+    // ─── RESET TO DEFAULT SAFE DISTANCES ─────────────────────────────────────
+    export function resetToDefaultSafeDistances() {
+        currentFrontSafeDistance = DEFAULT_SAFE_DISTANCE;
+        currentBackSafeDistance = DEFAULT_SAFE_DISTANCE;
     }
 
     // ─── MOTION FUNCTIONS ───────────────────────────────────────────────────────
     export function forward() {
-        if (Robot.Sonar.frontDistance < SAFE_DISTANCE) {
+        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -87,7 +122,7 @@ namespace Robot.Motion {
     }
 
     export function backward() {
-        if (Robot.Sonar.backDistance < SAFE_DISTANCE) {
+        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -116,7 +151,7 @@ namespace Robot.Motion {
     }
 
     export function turnLeft() {
-        if (Robot.Sonar.frontDistance < SAFE_DISTANCE) {
+        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -132,7 +167,7 @@ namespace Robot.Motion {
     }
 
     export function turnRight() {
-        if (Robot.Sonar.frontDistance < SAFE_DISTANCE) {
+        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -148,7 +183,7 @@ namespace Robot.Motion {
     }
 
     export function turnLeftBackward() {
-        if (Robot.Sonar.backDistance < SAFE_DISTANCE) {
+        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -164,7 +199,7 @@ namespace Robot.Motion {
     }
 
     export function turnRightBackward() {
-        if (Robot.Sonar.backDistance < SAFE_DISTANCE) {
+        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
