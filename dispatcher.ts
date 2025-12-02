@@ -49,6 +49,27 @@ namespace Robot.Dispatcher {
                     }
                 }
 
+                // Process Sensor Toggles
+                // Keys: cpu, bat, air, amb, hum, press, front, back, uv
+                // Values: 0 (disabled) or 1 (enabled)
+                
+                const updateFlag = (key: string, configKey: keyof Robot.State.SensorConfig) => {
+                    if (typeof parsed[key] === "number") {
+                        Robot.State.sensorConfig[configKey] = (parsed[key] === 1);
+                        processed = true;
+                    }
+                };
+
+                updateFlag("cpu", "cpu_enabled");
+                updateFlag("bat", "battery_enabled");
+                updateFlag("air", "air_enabled");
+                updateFlag("amb", "ambient_enabled");
+                updateFlag("hum", "humidity_enabled");
+                updateFlag("press", "pressure_enabled");
+                updateFlag("uv", "uv_enabled");
+                updateFlag("front", "front_distance_enabled");
+                updateFlag("back", "back_distance_enabled");
+
                 return processed;
             }
             return false;

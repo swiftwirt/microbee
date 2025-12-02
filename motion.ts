@@ -49,7 +49,7 @@ namespace Robot.Motion {
 
     // ─── MOTION FUNCTIONS ───────────────────────────────────────────────────────
     export function forward() {
-        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
+        if (Robot.Sonar.frontDistance !== -1 && Robot.Sonar.frontDistance < currentFrontSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -60,7 +60,7 @@ namespace Robot.Motion {
     }
 
     export function backward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (Robot.Sonar.backDistance !== -1 && Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -85,7 +85,7 @@ namespace Robot.Motion {
     }
 
     export function turnLeft() {
-        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
+        if (Robot.Sonar.frontDistance !== -1 && Robot.Sonar.frontDistance < currentFrontSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -99,7 +99,7 @@ namespace Robot.Motion {
     }
 
     export function turnRight() {
-        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
+        if (Robot.Sonar.frontDistance !== -1 && Robot.Sonar.frontDistance < currentFrontSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -113,7 +113,7 @@ namespace Robot.Motion {
     }
 
     export function turnLeftBackward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (Robot.Sonar.backDistance !== -1 && Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -127,7 +127,7 @@ namespace Robot.Motion {
     }
 
     export function turnRightBackward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (Robot.Sonar.backDistance !== -1 && Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }

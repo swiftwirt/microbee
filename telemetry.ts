@@ -51,23 +51,34 @@ namespace Robot.Telemetry {
 
     // ───── SEND TELEMETRY ─────
     export function sendTelemetry() {
-        if (!bme680Ready) {
+        const config = Robot.State.sensorConfig;
+        const bmeEnabled = config.air_enabled || config.ambient_enabled || config.humidity_enabled || config.pressure_enabled;
+
+        if (bmeEnabled && !bme680Ready) {
             bme680Ready = Robot.Drivers.BME680.init();
         }
 
         // Gather Data
-        let cpuTemp = input.temperature();
-        let battery = readBatteryVoltage();
-        let front = Robot.Sonar.frontDistance;
-        let back = Robot.Sonar.backDistance;
+        let cpuTemp = config.cpu_enabled ? input.temperature() : -999;
+        let battery = config.battery_enabled ? readBatteryVoltage() : -1;
+        let front = config.front_distance_enabled ? Robot.Sonar.frontDistance : -1;
+        let back = config.back_distance_enabled ? Robot.Sonar.backDistance : -1;
 
-        let bme = Robot.Drivers.BME680.readSample();
-        let ambient = bme.ambient;
-        let humidity = bme.humidity;
-        let pressure = bme.pressure;
-        let airQuality = -1; // Disabled
+        let ambient = -999;
+        let humidity = -1;
+        let pressure = -1;
+        let airQuality = -1;
 
-        let uvLevel = readUvLevel();
+        if (bmeEnabled && bme680Ready) {
+            let bme = Robot.Drivers.BME680.readSample();
+            if (config.ambient_enabled) ambient = bme.ambient;
+            if (config.humidity_enabled) humidity = bme.humidity;
+            if (config.pressure_enabled) pressure = bme.pressure;
+            // airQuality is manually disabled in code as -1, but if we had it:
+            // if (config.air_enabled) airQuality = ...; 
+        }
+
+        let uvLevel = config.uv_enabled ? readUvLevel() : -1;
 
         // Check for changes
         const changed =
@@ -95,18 +106,62 @@ namespace Robot.Telemetry {
         lastUvLevel = uvLevel;
 
         // Build Payload
-        let p: any = { cpu: cpuTemp };
-        if (battery >= 0) p.battery = battery;
-        if (front >= 0) p.front = front;
-        if (back >= 0) p.back = back;
-        if (ambient > -999) p.ambient = ambient;
-        if (humidity >= 0) p.humidity = humidity;
-        if (airQuality >= 0) p.airQuality = airQuality;
-        if (pressure >= 0) p.atmospherePressure = pressure;
-        if (uvLevel >= 0) p.uvLevel = uvLevel;
+        let p: any = {};
+        
+        if (config.cpu_enabled) p.cpu = cpuTemp;
+        else p.cpu = null;
+
+        if (config.battery_enabled) {
+            if (battery >= 0) p.battery = battery;
+        } else {
+            p.battery = null;
+        }
+
+        if (config.front_distance_enabled) {
+            if (front >= 0) p.front = front;
+        } else {
+            p.front = null;
+        }
+
+        if (config.back_distance_enabled) {
+            if (back >= 0) p.back = back;
+        } else {
+            p.back = null;
+        }
+
+        if (config.ambient_enabled) {
+            if (ambient > -999) p.ambient = ambient;
+        } else {
+            p.ambient = null;
+        }
+
+        if (config.humidity_enabled) {
+            if (humidity >= 0) p.humidity = humidity;
+        } else {
+            p.humidity = null;
+        }
+
+        if (config.air_enabled) {
+            if (airQuality >= 0) p.airQuality = airQuality;
+        } else {
+            p.airQuality = null;
+        }
+
+        if (config.pressure_enabled) {
+            if (pressure >= 0) p.atmospherePressure = pressure;
+        } else {
+            p.atmospherePressure = null;
+        }
+        
+        if (config.uv_enabled) {
+            if (uvLevel >= 0) p.uvLevel = uvLevel;
+        } else {
+            p.uvLevel = null;
+        }
 
         // Send
         Robot.DataTransfer.sendChunkedData(JSON.stringify(p), telemetryMessageId);
         telemetryMessageId = (telemetryMessageId + 1) & 0xffff;
     }
 }
+

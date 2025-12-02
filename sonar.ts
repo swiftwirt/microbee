@@ -13,12 +13,21 @@ namespace Robot.Sonar {
     }
 
     basic.forever(function () {
-        frontDistance = retryPing(Robot.Config.PIN_SONAR_FRONT_TRIG, Robot.Config.PIN_SONAR_FRONT_ECHO);
-        backDistance = retryPing(Robot.Config.PIN_SONAR_BACK_TRIG, Robot.Config.PIN_SONAR_BACK_ECHO);
+        if (Robot.State.sensorConfig.front_distance_enabled) {
+            frontDistance = retryPing(Robot.Config.PIN_SONAR_FRONT_TRIG, Robot.Config.PIN_SONAR_FRONT_ECHO);
+        } else {
+            frontDistance = -1;
+        }
+
+        if (Robot.State.sensorConfig.back_distance_enabled) {
+            backDistance = retryPing(Robot.Config.PIN_SONAR_BACK_TRIG, Robot.Config.PIN_SONAR_BACK_ECHO);
+        } else {
+            backDistance = -1;
+        }
 
         if (
-            (Robot.Motion.currentDir > 0 && frontDistance < Robot.Motion.getCurrentFrontSafeDistance()) ||
-            (Robot.Motion.currentDir < 0 && backDistance < Robot.Motion.getCurrentBackSafeDistance())
+            (Robot.Motion.currentDir > 0 && frontDistance !== -1 && frontDistance < Robot.Motion.getCurrentFrontSafeDistance()) ||
+            (Robot.Motion.currentDir < 0 && backDistance !== -1 && backDistance < Robot.Motion.getCurrentBackSafeDistance())
         ) {
             Robot.Motion.stop();
         }
