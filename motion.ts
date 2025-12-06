@@ -12,8 +12,21 @@ namespace Robot.Motion {
     const TURN_SCALE_DEN = 10;
     export const ACTIVE_BRAKE_MS = 100;
 
+    export enum MoveState {
+        Stop,
+        Forward,
+        Backward,
+        TurnLeft,
+        TurnRight,
+        TurnLeftRev,
+        TurnRightRev,
+        SpinLeft,
+        SpinRight
+    }
+
     export let motorsRunning = false;
     export let currentDir = 0; // +1 forward, -1 backward, 0 spin/stop
+    let currentMoveState = MoveState.Stop;
 
     // ─── MOTOR SPEED STATE ─────────────────────────────────────────────────────
     let currentSpeedForward = Robot.Config.MAX_MOTOR_SPEED;
@@ -27,11 +40,29 @@ namespace Robot.Motion {
     export function setSpeedForward(speed: number) {
         if (typeof speed !== "number") return;
         currentSpeedForward = Math.max(0, Math.min(1023, speed));
+        
+        // Live update if currently moving forward or turning forward
+        if (motorsRunning) {
+            switch (currentMoveState) {
+                case MoveState.Forward: forward(); break;
+                case MoveState.TurnLeft: turnLeft(); break;
+                case MoveState.TurnRight: turnRight(); break;
+            }
+        }
     }
 
     export function setSpeedBackward(speed: number) {
         if (typeof speed !== "number") return;
         currentSpeedBackward = Math.max(0, Math.min(1023, speed));
+        
+        // Live update if currently moving backward or turning backward
+        if (motorsRunning) {
+            switch (currentMoveState) {
+                case MoveState.Backward: backward(); break;
+                case MoveState.TurnLeftRev: turnLeftBackward(); break;
+                case MoveState.TurnRightRev: turnRightBackward(); break;
+            }
+        }
     }
 
     export function setSpeeds(speedForward: number, speedBackward: number) {
@@ -59,17 +90,14 @@ namespace Robot.Motion {
     export function getCurrentFrontSafeDistance(): number { return currentFrontSafeDistance; }
     export function getCurrentBackSafeDistance(): number { return currentBackSafeDistance; }
 
-    function getEffectiveSpeed(speed: number): number {
-        return speed > 0 ? speed : Robot.Config.MAX_MOTOR_SPEED;
-    }
-
     // ─── MOTION FUNCTIONS ───────────────────────────────────────────────────────
     export function forward() {
         if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
-        writeWheels(getEffectiveSpeed(currentSpeedForward), 0, getEffectiveSpeed(currentSpeedForward), 0);
+        currentMoveState = MoveState.Forward;
+        writeWheels(currentSpeedForward, 0, currentSpeedForward, 0);
         Robot.Display.showArrowIfChanged(ARROW_FWD);
         motorsRunning = true;
         currentDir = 1;
@@ -80,13 +108,15 @@ namespace Robot.Motion {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
-        writeWheels(0, getEffectiveSpeed(currentSpeedBackward), 0, getEffectiveSpeed(currentSpeedBackward));
+        currentMoveState = MoveState.Backward;
+        writeWheels(0, currentSpeedBackward, 0, currentSpeedBackward);
         Robot.Display.showArrowIfChanged(ARROW_REV);
         motorsRunning = true;
         currentDir = -1;
     }
 
     export function spinLeft() {
+        currentMoveState = MoveState.SpinLeft;
         writeWheels(Robot.Config.MAX_MOTOR_SPEED, 0, 0, 0);
         Robot.Display.showArrowIfChanged(ARROW_SPIN_L);
         motorsRunning = true;
@@ -94,6 +124,7 @@ namespace Robot.Motion {
     }
 
     export function spinRight() {
+        currentMoveState = MoveState.SpinRight;
         writeWheels(0, 0, Robot.Config.MAX_MOTOR_SPEED, 0);
         Robot.Display.showArrowIfChanged(ARROW_SPIN_R);
         motorsRunning = true;
@@ -105,7 +136,8 @@ namespace Robot.Motion {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
-        const speed = getEffectiveSpeed(currentSpeedForward);
+        currentMoveState = MoveState.TurnLeft;
+        const speed = currentSpeedForward;
         const slow = Math.idiv(speed * TURN_SCALE_NUM, TURN_SCALE_DEN);
         writeWheels(speed, 0, slow, 0);
         Robot.Display.showArrowIfChanged(ARROW_TURN_L);
@@ -118,7 +150,8 @@ namespace Robot.Motion {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
-        const speed = getEffectiveSpeed(currentSpeedForward);
+        currentMoveState = MoveState.TurnRight;
+        const speed = currentSpeedForward;
         const slow = Math.idiv(speed * TURN_SCALE_NUM, TURN_SCALE_DEN);
         writeWheels(slow, 0, speed, 0);
         Robot.Display.showArrowIfChanged(ARROW_TURN_R);
@@ -131,7 +164,8 @@ namespace Robot.Motion {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
-        const speed = getEffectiveSpeed(currentSpeedBackward);
+        currentMoveState = MoveState.TurnLeftRev;
+        const speed = currentSpeedBackward;
         const slow = Math.idiv(speed * TURN_SCALE_NUM, TURN_SCALE_DEN);
         writeWheels(0, speed, 0, slow);
         Robot.Display.showArrowIfChanged(ARROW_TURN_L_REV);
@@ -144,7 +178,8 @@ namespace Robot.Motion {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
-        const speed = getEffectiveSpeed(currentSpeedBackward);
+        currentMoveState = MoveState.TurnRightRev;
+        const speed = currentSpeedBackward;
         const slow = Math.idiv(speed * TURN_SCALE_NUM, TURN_SCALE_DEN);
         writeWheels(0, slow, 0, speed);
         Robot.Display.showArrowIfChanged(ARROW_TURN_R_REV);
@@ -174,6 +209,7 @@ namespace Robot.Motion {
 
     export function stop() {
         if (motorsRunning) brakePulse();
+        currentMoveState = MoveState.Stop;
         writeWheels(0, 0, 0, 0);
         motorsRunning = false;
         Robot.Display.showIconIfChanged(Robot.State.isConnected() ? IconNames.Happy : IconNames.Skull);
