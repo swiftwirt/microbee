@@ -12,15 +12,16 @@ namespace Robot.Bluetooth {
 
     bluetooth.onBluetoothDisconnected(() => {
         Robot.State.setConnected(false);
-        // Cool disconnect animation
-        basic.showIcon(IconNames.Sad);
-        soundExpression.sad.play();
-        basic.pause(300);
-        basic.showIcon(IconNames.Asleep);
-        basic.pause(300);
-        basic.showIcon(IconNames.Confused);
-        basic.pause(300);
-        Robot.Display.showIconIfChanged(IconNames.Skull);
+        // Heartbeat animation (same as startup)
+        basic.showIcon(IconNames.Heart);
+        basic.pause(200);
+        basic.showIcon(IconNames.SmallHeart);
+        basic.pause(200);
+        basic.showIcon(IconNames.Heart);
+        basic.pause(200);
+        basic.showIcon(IconNames.SmallHeart);
+        basic.pause(200);
+        basic.showIcon(IconNames.Heart);
     });
 
     bluetooth.onUartDataReceived(NEWLINE, () => {
