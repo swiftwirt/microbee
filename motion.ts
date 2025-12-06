@@ -24,20 +24,36 @@ namespace Robot.Motion {
     let currentBackSafeDistance = Robot.Config.DEFAULT_SAFE_DISTANCE_CM;
 
     // ─── MOTOR CONTROL CONFIG ─────────────────────────────────────────────────
-    export function setSpeeds(speedForward: number, speedBackward: number) {
-        speedForward = (typeof speedForward === "number") ? speedForward : Robot.Config.MAX_MOTOR_SPEED;
-        speedBackward = (typeof speedBackward === "number") ? speedBackward : Robot.Config.MAX_MOTOR_SPEED;
+    export function setSpeedForward(speed: number) {
+        if (typeof speed !== "number") return;
+        currentSpeedForward = Math.max(0, Math.min(1023, speed));
+    }
 
-        currentSpeedForward = Math.max(0, Math.min(1023, speedForward));
-        currentSpeedBackward = Math.max(0, Math.min(1023, speedBackward));
+    export function setSpeedBackward(speed: number) {
+        if (typeof speed !== "number") return;
+        currentSpeedBackward = Math.max(0, Math.min(1023, speed));
+    }
+
+    export function setSpeeds(speedForward: number, speedBackward: number) {
+        setSpeedForward(speedForward);
+        setSpeedBackward(speedBackward);
+    }
+
+    export function setSafeDistanceFront(distance: number) {
+        if (typeof distance !== "number") return;
+        // Range: 20cm to 100cm
+        currentFrontSafeDistance = Math.max(20, Math.min(100, distance));
+    }
+
+    export function setSafeDistanceBack(distance: number) {
+        if (typeof distance !== "number") return;
+        // Range: 5cm to 200cm
+        currentBackSafeDistance = Math.max(5, Math.min(200, distance));
     }
 
     export function setSafeDistances(frontDistance: number, backDistance: number) {
-        frontDistance = (typeof frontDistance === "number") ? frontDistance : Robot.Config.DEFAULT_SAFE_DISTANCE_CM;
-        backDistance = (typeof backDistance === "number") ? backDistance : Robot.Config.DEFAULT_SAFE_DISTANCE_CM;
-
-        currentFrontSafeDistance = Math.max(20, Math.min(100, frontDistance));
-        currentBackSafeDistance = Math.max(5, Math.min(200, backDistance));
+        setSafeDistanceFront(frontDistance);
+        setSafeDistanceBack(backDistance);
     }
 
     export function getCurrentFrontSafeDistance(): number { return currentFrontSafeDistance; }

@@ -19,34 +19,28 @@ namespace Robot.Dispatcher {
             // Parse as JSON (only called for commands starting with '{')
             const parsed = JSON.parse(cmd);
 
-            // format: {"sf":X,"sb":Y} or {"df":Z,"db":W}
+            // format: {"sf":X,"sb":Y} or {"df":Z,"db":W} or parts thereof
             if (parsed && typeof parsed === "object") {
                 let processed = false;
 
-                // Process motor speeds if both are provided
-                if (typeof parsed.sf === "number" && typeof parsed.sb === "number") {
-                    const speedFront = parsed.sf;
-                    const speedBack = parsed.sb;
-
-                    // Validate and apply motor speeds
-                    if (speedFront >= 0 && speedFront <= Robot.Config.MAX_MOTOR_SPEED &&
-                        speedBack >= 0 && speedBack <= Robot.Config.MAX_MOTOR_SPEED) {
-                        Robot.Motion.setSpeeds(speedFront, speedBack);
-                        processed = true;
-                    }
+                // Process motor speeds individually
+                if (typeof parsed.sf === "number") {
+                    Robot.Motion.setSpeedForward(parsed.sf);
+                    processed = true;
+                }
+                if (typeof parsed.sb === "number") {
+                    Robot.Motion.setSpeedBackward(parsed.sb);
+                    processed = true;
                 }
 
-                // Process safe distances if both are provided
-                if (typeof parsed.df === "number" && typeof parsed.db === "number") {
-                    const frontDistance = parsed.df;
-                    const backDistance = parsed.db;
-
-                    // Validate and apply safe distances (20-100cm range)
-                    // We keep these explicit ranges as they might be protocol-specific limits
-                    if (frontDistance >= 20 && frontDistance <= 100 && backDistance >= 5 && backDistance <= 200) {
-                        Robot.Motion.setSafeDistances(frontDistance, backDistance);
-                        processed = true;
-                    }
+                // Process safe distances individually
+                if (typeof parsed.df === "number") {
+                    Robot.Motion.setSafeDistanceFront(parsed.df);
+                    processed = true;
+                }
+                if (typeof parsed.db === "number") {
+                    Robot.Motion.setSafeDistanceBack(parsed.db);
+                    processed = true;
                 }
 
                 return processed;
