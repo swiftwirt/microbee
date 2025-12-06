@@ -19,27 +19,27 @@ namespace Robot.Dispatcher {
             // Parse as JSON (only called for commands starting with '{')
             const parsed = JSON.parse(cmd);
 
-            // format: {"l":X,"r":Y,"f":Z,"b":W}
+            // format: {"sf":X,"sb":Y} or {"df":Z,"db":W}
             if (parsed && typeof parsed === "object") {
                 let processed = false;
 
                 // Process motor speeds if both are provided
-                if (typeof parsed.l === "number" && typeof parsed.r === "number") {
-                    const leftSpeed = parsed.l;
-                    const rightSpeed = parsed.r;
+                if (typeof parsed.sf === "number" && typeof parsed.sb === "number") {
+                    const speedFront = parsed.sf;
+                    const speedBack = parsed.sb;
 
                     // Validate and apply motor speeds
-                    if (leftSpeed >= 0 && leftSpeed <= Robot.Config.MAX_MOTOR_SPEED &&
-                        rightSpeed >= 0 && rightSpeed <= Robot.Config.MAX_MOTOR_SPEED) {
-                        Robot.Motion.setMotorSpeeds(leftSpeed, rightSpeed);
+                    if (speedFront >= 0 && speedFront <= Robot.Config.MAX_MOTOR_SPEED &&
+                        speedBack >= 0 && speedBack <= Robot.Config.MAX_MOTOR_SPEED) {
+                        Robot.Motion.setSpeeds(speedFront, speedBack);
                         processed = true;
                     }
                 }
 
                 // Process safe distances if both are provided
-                if (typeof parsed.f === "number" && typeof parsed.b === "number") {
-                    const frontDistance = parsed.f;
-                    const backDistance = parsed.b;
+                if (typeof parsed.df === "number" && typeof parsed.db === "number") {
+                    const frontDistance = parsed.df;
+                    const backDistance = parsed.db;
 
                     // Validate and apply safe distances (20-100cm range)
                     // We keep these explicit ranges as they might be protocol-specific limits
