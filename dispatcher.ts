@@ -3,10 +3,15 @@ namespace Robot.Dispatcher {
         // Fast-path: Check if command looks like JSON before expensive parsing
         // Numeric commands ("1", "2", etc.) are handled immediately
         if (cmd.length > 0 && cmd.charAt(0) === "{") {
-            // Only attempt JSON parsing for commands starting with '{'
-            if (!tryParseSettingsMessage(cmd)) {
-                executeCmd(cmd);
+            // Quick check: only parse JSON if it contains expected setting keys
+            // This avoids expensive JSON.parse() for non-settings JSON messages
+            if (cmd.indexOf("\"sf\"") >= 0 || cmd.indexOf("\"sb\"") >= 0 ||
+                cmd.indexOf("\"df\"") >= 0 || cmd.indexOf("\"db\"") >= 0) {
+                if (tryParseSettingsMessage(cmd)) {
+                    return; // Settings processed, exit early
+                }
             }
+            executeCmd(cmd);
         } else {
             // Handle numeric commands directly (most common case)
             executeCmd(cmd);

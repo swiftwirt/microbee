@@ -90,9 +90,20 @@ namespace Robot.Motion {
     export function getCurrentFrontSafeDistance(): number { return currentFrontSafeDistance; }
     export function getCurrentBackSafeDistance(): number { return currentBackSafeDistance; }
 
+    // ─── SAFETY CHECK HELPER ────────────────────────────────────────────────────
+    function isSafeToMove(direction: number): boolean {
+        if (direction > 0 && Robot.Sonar.frontDistance < currentFrontSafeDistance) {
+            return false;
+        }
+        if (direction < 0 && Robot.Sonar.backDistance < currentBackSafeDistance) {
+            return false;
+        }
+        return true;
+    }
+
     // ─── MOTION FUNCTIONS ───────────────────────────────────────────────────────
     export function forward() {
-        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
+        if (!isSafeToMove(1)) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -104,7 +115,7 @@ namespace Robot.Motion {
     }
 
     export function backward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (!isSafeToMove(-1)) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -132,7 +143,7 @@ namespace Robot.Motion {
     }
 
     export function turnLeft() {
-        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
+        if (!isSafeToMove(1)) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -146,7 +157,7 @@ namespace Robot.Motion {
     }
 
     export function turnRight() {
-        if (Robot.Sonar.frontDistance < currentFrontSafeDistance) {
+        if (!isSafeToMove(1)) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -160,7 +171,7 @@ namespace Robot.Motion {
     }
 
     export function turnLeftBackward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (!isSafeToMove(-1)) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -174,7 +185,7 @@ namespace Robot.Motion {
     }
 
     export function turnRightBackward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (!isSafeToMove(-1)) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }

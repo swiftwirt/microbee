@@ -12,13 +12,15 @@ namespace Robot.Telemetry {
     let telemetryMessageId = 0;
 
     let bme680Ready = false;
+    let bme680RetryCounter = 0;
+    const BME680_RETRY_INTERVAL = 10; // Retry init every 10 telemetry cycles
 
     // ───── UV SENSOR CALIBRATION ─────
     let uvBaseline = 0;
 
     function calibrateUvBaseline() {
         let sum = 0;
-        let samples = 20;
+        const samples = 10; // Reduced from 20 to minimize startup blocking (200ms vs 400ms)
         for (let i = 0; i < samples; i++) {
             sum += pins.analogReadPin(Robot.Config.PIN_UV_SENSOR);
             basic.pause(20);
@@ -51,8 +53,13 @@ namespace Robot.Telemetry {
 
     // ───── SEND TELEMETRY ─────
     export function sendTelemetry() {
+        // Avoid frequent BME680 init retries to reduce I2C blocking
         if (!bme680Ready) {
-            bme680Ready = Robot.Drivers.BME680.init();
+            bme680RetryCounter++;
+            if (bme680RetryCounter >= BME680_RETRY_INTERVAL) {
+                bme680Ready = Robot.Drivers.BME680.init();
+                bme680RetryCounter = 0;
+            }
         }
 
         // Gather Data

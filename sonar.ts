@@ -16,11 +16,15 @@ namespace Robot.Sonar {
         frontDistance = retryPing(Robot.Config.PIN_SONAR_FRONT_TRIG, Robot.Config.PIN_SONAR_FRONT_ECHO);
         backDistance = retryPing(Robot.Config.PIN_SONAR_BACK_TRIG, Robot.Config.PIN_SONAR_BACK_ECHO);
 
-        if (
-            (Robot.Motion.currentDir > 0 && frontDistance < Robot.Motion.getCurrentFrontSafeDistance()) ||
-            (Robot.Motion.currentDir < 0 && backDistance < Robot.Motion.getCurrentBackSafeDistance())
-        ) {
-            Robot.Motion.stop();
+        // Only stop if motors are actually running to avoid race conditions
+        // and unnecessary stop commands that would trigger brake pulses
+        if (Robot.Motion.motorsRunning) {
+            if (
+                (Robot.Motion.currentDir > 0 && frontDistance < Robot.Motion.getCurrentFrontSafeDistance()) ||
+                (Robot.Motion.currentDir < 0 && backDistance < Robot.Motion.getCurrentBackSafeDistance())
+            ) {
+                Robot.Motion.stop();
+            }
         }
         basic.pause(Robot.Config.SONAR_INTERVAL_MS);
     });
