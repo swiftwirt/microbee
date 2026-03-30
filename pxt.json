@@ -5,7 +5,8 @@
         "core": "*",
         "microphone": "*",
         "bluetooth": "*",
-        "pxt-sonar": "github:microsoft/pxt-sonar#v0.0.6"
+        "pxt-sonar": "github:microsoft/pxt-sonar#v0.0.6",
+        "robotbit": "github:kittenbot/pxt-robotbit"
     },
     "files": [
         "main.blocks",

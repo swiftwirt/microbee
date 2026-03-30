@@ -19,34 +19,38 @@ A Bluetooth-controlled robot built for the micro:bit platform with obstacle avoi
 
 ## 🔧 Hardware Requirements
 
-### micro:bit Pin Configuration
+### Board: KittenBot Robotbit V2
+
+Motors are controlled via the Robotbit's onboard PCA9685 I2C chip using the `pxt-robotbit` extension. No motor wiring to micro:bit pins is required.
+
+### Pin Configuration
 
 | Component | Pin | Function |
 |-----------|-----|----------|
-| **Motor Control** | | |
-| Left Motor Forward | P12 | PWM Output |
-| Left Motor Backward | P13 | PWM Output |
-| Right Motor Forward | P14 | PWM Output |
-| Right Motor Backward | P15 | PWM Output |
+| **Motor Control (via Robotbit I2C)** | | |
+| Left side wheels (front + back) | M1A, M1B | Robotbit motor ports |
+| Right side wheels (front + back) | M2A, M2B | Robotbit motor ports |
 | **Sonar Sensors** | | |
-| Front Sonar Trigger | P16 | Digital Output |
+| Front Sonar Trigger | P12 | Digital Output |
 | Front Sonar Echo | P8 | Digital Input |
 | Back Sonar Trigger | P1 | Digital Output |
 | Back Sonar Echo | P2 | Digital Input |
 | **Sensors** | | |
-| UV Sensor | P0 | Analog Input |
+| UV Sensor | P0 | Analog Input (requires removing Robotbit buzzer jumper) |
 | BME680 SDA | P20 | I2C Data |
 | BME680 SCL | P19 | I2C Clock |
+
+> **Note:** P16 is reserved by the Robotbit's onboard RGB LEDs and cannot be used as a sonar pin.
 
 ### Required Components
 
 - micro:bit v2
-- 2x DC Motors with wheels
-- Motor driver module (L298N or similar)
-- 2x HC-SR04 Ultrasonic sensors
-- Robot chassis and battery pack
+- KittenBot Robotbit V2 expansion board
+- 4x DC motors (Mecanum wheel configuration)
+- 18650 Li-ion battery (for Robotbit)
+- 2x HC-SR04 Ultrasonic sensors (optional)
 - **BME680 Sensor (Optional)**: Digital Temperature, Humidity, Pressure, and Gas sensor
-- **GUVA-S12SD UV Sensor (Optional)**: Analog UV intensity sensor
+- **GUVA-S12SD UV Sensor (Optional)**: Analog UV intensity sensor — remove Robotbit buzzer jumper to free P0
 
 ## 🚀 Quick Start
 

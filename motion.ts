@@ -28,8 +28,8 @@ namespace Robot.Motion {
         leftSpeed = (typeof leftSpeed === "number") ? leftSpeed : Robot.Config.MAX_MOTOR_SPEED;
         rightSpeed = (typeof rightSpeed === "number") ? rightSpeed : Robot.Config.MAX_MOTOR_SPEED;
 
-        currentLeftSpeed = Math.max(0, Math.min(1023, leftSpeed));
-        currentRightSpeed = Math.max(0, Math.min(1023, rightSpeed));
+        currentLeftSpeed = Math.max(0, Math.min(Robot.Config.MAX_MOTOR_SPEED, leftSpeed));
+        currentRightSpeed = Math.max(0, Math.min(Robot.Config.MAX_MOTOR_SPEED, rightSpeed));
     }
 
     export function setSafeDistances(frontDistance: number, backDistance: number) {
@@ -141,11 +141,15 @@ namespace Robot.Motion {
     }
 
     // ─── LOW-LEVEL MOTOR CONTROL ────────────────────────────────────────────────
+    // Robotbit V2: M1A+M1B = left side, M2A+M2B = right side (4 Mecanum wheels).
+    // Signed speed: positive = forward, negative = backward.
     export function writeWheels(Lf: number, Lb: number, Rf: number, Rb: number) {
-        pins.analogWritePin(Robot.Config.PIN_MOTOR_LEFT_FWD, Lf);
-        pins.analogWritePin(Robot.Config.PIN_MOTOR_LEFT_REV, Lb);
-        pins.analogWritePin(Robot.Config.PIN_MOTOR_RIGHT_FWD, Rf);
-        pins.analogWritePin(Robot.Config.PIN_MOTOR_RIGHT_REV, Rb);
+        const leftSpeed = Lf > 0 ? Lf : -Lb;
+        const rightSpeed = Rf > 0 ? Rf : -Rb;
+        robotbit.MotorRun(robotbit.Motors.M1A, leftSpeed);
+        robotbit.MotorRun(robotbit.Motors.M1B, leftSpeed);
+        robotbit.MotorRun(robotbit.Motors.M2A, rightSpeed);
+        robotbit.MotorRun(robotbit.Motors.M2B, rightSpeed);
     }
 
     export function brakePulse() {
