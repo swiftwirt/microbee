@@ -13,30 +13,6 @@ namespace Robot.Telemetry {
 
     let bme680Ready = false;
 
-    // ───── UV SENSOR CALIBRATION ─────
-    let uvBaseline = 0;
-
-    function calibrateUvBaseline() {
-        let sum = 0;
-        let samples = 20;
-        for (let i = 0; i < samples; i++) {
-            sum += pins.analogReadPin(Robot.Config.PIN_UV_SENSOR);
-            basic.pause(20);
-        }
-        uvBaseline = Math.idiv(sum, samples);
-    }
-
-    function readUvLevel(): number {
-        const raw = pins.analogReadPin(Robot.Config.PIN_UV_SENSOR);
-        let corrected = raw - uvBaseline;
-        if (corrected < 0) corrected = 0;
-
-        let span = 1023 - uvBaseline;
-        if (span <= 0) span = 1;
-
-        let uv = Math.idiv(corrected * 11, span);
-        return Math.max(0, Math.min(11, uv));
-    }
 
     function readBatteryVoltage(): number {
         // Implement real voltage reading if needed
@@ -45,7 +21,6 @@ namespace Robot.Telemetry {
 
     // ───── PUBLIC STARTUP ─────
     export function init() {
-        calibrateUvBaseline();
         bme680Ready = Robot.Drivers.BME680.init();
     }
 
@@ -67,8 +42,6 @@ namespace Robot.Telemetry {
         let pressure = bme.pressure;
         let airQuality = -1; // Disabled
 
-        let uvLevel = readUvLevel();
-
         // Check for changes
         const changed =
             cpuTemp !== lastCpuTemp ||
@@ -78,8 +51,7 @@ namespace Robot.Telemetry {
             ambient !== lastAmbient ||
             humidity !== lastHumidity ||
             airQuality !== lastAirQuality ||
-            pressure !== lastPressure ||
-            uvLevel !== lastUvLevel;
+            pressure !== lastPressure;
 
         if (!changed) return;
 
@@ -92,7 +64,7 @@ namespace Robot.Telemetry {
         lastHumidity = humidity;
         lastAirQuality = airQuality;
         lastPressure = pressure;
-        lastUvLevel = uvLevel;
+        lastUvLevel = -1;
 
         // Build Payload
         let p: any = { cpu: cpuTemp };
@@ -103,7 +75,7 @@ namespace Robot.Telemetry {
         if (humidity >= 0) p.humidity = humidity;
         if (airQuality >= 0) p.airQuality = airQuality;
         if (pressure >= 0) p.atmospherePressure = pressure;
-        if (uvLevel >= 0) p.uvLevel = uvLevel;
+        // if (uvLevel >= 0) p.uvLevel = uvLevel;
 
         // Send
         Robot.DataTransfer.sendChunkedData(JSON.stringify(p), telemetryMessageId);
