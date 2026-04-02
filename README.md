@@ -31,10 +31,10 @@ Motors are controlled via the Robotbit's onboard PCA9685 I2C chip using the `pxt
 | Left side wheels (front + back) | M1A, M1B | Robotbit motor ports |
 | Right side wheels (front + back) | M2A, M2B | Robotbit motor ports |
 | **Sonar Sensors** | | |
-| Front Sonar Trigger | P12 | Digital Output |
+| Front Sonar Trigger | P2 | Digital Output |
 | Front Sonar Echo | P8 | Digital Input |
-| Back Sonar Trigger | P1 | Digital Output |
-| Back Sonar Echo | P2 | Digital Input |
+| Back Sonar Trigger | Not used | Single front sonar setup |
+| Back Sonar Echo | Not used | Single front sonar setup |
 | **Sensors** | | |
 | UV Sensor | P0 | Analog Input (requires removing Robotbit buzzer jumper) |
 | BME680 SDA | P20 | I2C Data |
@@ -78,8 +78,8 @@ Motors are controlled via the Robotbit's onboard PCA9685 I2C chip using the `pxt
 |---------|--------|-------------|
 | `1` | Forward | Move forward (with obstacle detection) |
 | `2` | Backward | Move backward (with obstacle detection) |
-| `3` | Spin Left | Rotate left in place |
-| `4` | Spin Right | Rotate right in place |
+| `3` | Spin Left | Aim front sonar servo left |
+| `4` | Spin Right | Aim front sonar servo right |
 | `5` | Turn Left | Turn left while moving forward |
 | `6` | Turn Right | Turn right while moving forward |
 | `7` | Turn Left Backward | Turn left while moving backward |

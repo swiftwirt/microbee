@@ -12,6 +12,7 @@ soundExpression.giggle.playUntilDone();
 
 // Init Telemetry Sensors
 Robot.Telemetry.init();
+Robot.Motion.centerFrontServo();
 
 Robot.Display.showIconIfChanged(IconNames.Happy);
 

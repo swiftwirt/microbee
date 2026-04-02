@@ -7,6 +7,10 @@ namespace Robot.Motion {
     const ARROW_TURN_R = ArrowNames.SouthWest;
     const ARROW_TURN_L_REV = ArrowNames.NorthEast;
     const ARROW_TURN_R_REV = ArrowNames.NorthWest;
+    const FRONT_SERVO_CHANNEL = robotbit.Servos.S1;
+    const FRONT_SERVO_LEFT_DEG = 160;
+    const FRONT_SERVO_CENTER_DEG = 90;
+    const FRONT_SERVO_RIGHT_DEG = 20;
 
     const TURN_SCALE_NUM = 4;
     const TURN_SCALE_DEN = 10;
@@ -42,6 +46,9 @@ namespace Robot.Motion {
 
     export function getCurrentFrontSafeDistance(): number { return currentFrontSafeDistance; }
     export function getCurrentBackSafeDistance(): number { return currentBackSafeDistance; }
+    export function centerFrontServo() {
+        robotbit.Servo(FRONT_SERVO_CHANNEL, FRONT_SERVO_CENTER_DEG);
+    }
 
     function getEffectiveSpeed(speed: number): number {
         return speed > 0 ? speed : Robot.Config.MAX_MOTOR_SPEED;
@@ -60,7 +67,7 @@ namespace Robot.Motion {
     }
 
     export function backward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (Robot.Sonar.backDistance >= 0 && Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -71,16 +78,16 @@ namespace Robot.Motion {
     }
 
     export function spinLeft() {
-        writeWheels(Robot.Config.MAX_MOTOR_SPEED, 0, 0, 0);
+        stop();
+        robotbit.Servo(FRONT_SERVO_CHANNEL, FRONT_SERVO_LEFT_DEG);
         Robot.Display.showArrowIfChanged(ARROW_SPIN_L);
-        motorsRunning = true;
         currentDir = 0;
     }
 
     export function spinRight() {
-        writeWheels(0, 0, Robot.Config.MAX_MOTOR_SPEED, 0);
+        stop();
+        robotbit.Servo(FRONT_SERVO_CHANNEL, FRONT_SERVO_RIGHT_DEG);
         Robot.Display.showArrowIfChanged(ARROW_SPIN_R);
-        motorsRunning = true;
         currentDir = 0;
     }
 
@@ -113,7 +120,7 @@ namespace Robot.Motion {
     }
 
     export function turnLeftBackward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (Robot.Sonar.backDistance >= 0 && Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
@@ -127,7 +134,7 @@ namespace Robot.Motion {
     }
 
     export function turnRightBackward() {
-        if (Robot.Sonar.backDistance < currentBackSafeDistance) {
+        if (Robot.Sonar.backDistance >= 0 && Robot.Sonar.backDistance < currentBackSafeDistance) {
             stop(); Robot.Display.showIconIfChanged(IconNames.No);
             return;
         }
